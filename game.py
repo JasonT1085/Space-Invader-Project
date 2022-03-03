@@ -1,4 +1,5 @@
 import pygame as pg
+from landing_page import LandingPage
 from sys import exit
 import game_functions as gf
 from time import sleep
@@ -7,18 +8,14 @@ from laser import Lasers
 from ship import Ship
 from alien import AlienFleet
 from settings import Settings
-from landing_page import LandingPage
 
 
 class Game:
     RED = (255, 0, 0)
 
+
     def __init__(self):
         pg.init()
-        g = Game()
-        lp = LandingPage(screen=g.screen)
-        lp.show()
-        g.play()
         self.settings = Settings()
         self.stats = GameStats(game=self)
         self.screen = pg.display.set_mode((self.settings.screen_width,
@@ -32,7 +29,7 @@ class Game:
         self.ship.set_lasers(self.lasers)
 
     def restart(self):
-        if self.stats.ships_left == 0:
+        if self.stats.ships_left == 0: 
           self.game_over()
         print("restarting game")
         self.lasers.empty()
@@ -64,13 +61,14 @@ class Game:
             gf.check_events(game=self)   # exits game if QUIT pressed
         self.game_over()
 
-    def game_over(self):
-      print('\nGAME OVER!\n\n')
+    def game_over(self): 
+      print('\nGAME OVER!\n\n')  
       exit()    # can ask to replay here instead of exiting the game
-
 
 def main():
     g = Game()
+    lp = LandingPage(game=g)
+    lp.show()
     g.play()
 
 

@@ -8,6 +8,7 @@ BLACK = (0, 0, 0)
 GREY = (130, 130, 130)
 
 
+
 class LandingPage:
     def __init__(self, screen):
         self.screen = screen
@@ -18,12 +19,11 @@ class LandingPage:
         font = pg.font.SysFont(None, 48)
 
         strings = [('SPACE', WHITE, headingFont), ('INVADERS', GREEN, subheadingFont),
-                   ('= 10 PTS', GREY, font), ('= 20 PTS', GREY, font),
-                   ('= 40 PTS', GREY, font), ('= ???', GREY, font),
-                   ('PLAY GAME', GREEN, font), ('HIGH SCORES', GREY, font)]
+                ('= 10 PTS', GREY, font), ('= 20 PTS', GREY, font),
+                            ('= 40 PTS', GREY, font), ('= ???', GREY, font),
+                ('PLAY GAME', GREEN, font), ('HIGH SCORES', GREY, font)]
 
-        self.texts = [self.get_text(
-            msg=s[0], color=s[1], font=s[2]) for s in strings]
+        self.texts = [self.get_text(msg=s[0], color=s[1], font=s[2]) for s in strings]
 
         self.posns = [150, 230]
         alien = [60 * x + 400 for x in range(4)]
@@ -33,11 +33,9 @@ class LandingPage:
 
         centerx = self.screen.get_rect().centerx
         n = len(self.texts)
-        self.rects = [self.get_text_rect(
-            text=self.texts[i], centerx=centerx, centery=self.posns[i]) for i in range(n)]
+        self.rects = [self.get_text_rect(text=self.texts[i], centerx=centerx, centery=self.posns[i]) for i in range(n)]
 
-    def get_text(self, font, msg, color): return font.render(
-        msg, True, color, BLACK)
+    def get_text(self, font, msg, color): return font.render(msg, True, color, BLACK)
 
     def get_text_rect(self, text, centerx, centery):
         rect = text.get_rect()
@@ -51,10 +49,9 @@ class LandingPage:
                 sys.exit()
             if e.type == pg.KEYUP and e.key == pg.K_p:   # pretend PLAY BUTTON pressed
                 self.landing_page_finished = True        # TODO change to actual PLAY button
-                # SEE ch. 14 of Crash Course for button
-
+                                                         # SEE ch. 14 of Crash Course for button
     def update(self):       # TODO make aliens move
-        pass
+        pass 
 
     def show(self):
         while not self.landing_page_finished:
