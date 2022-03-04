@@ -2,39 +2,63 @@ import pygame as pg
 from vector import Vector
 from pygame.sprite import Sprite, Group
 from copy import copy
-from random import randint
+from random import randint, choice
 from alien import Alien
+import Bunker
 
 
 class Lasers:
     def __init__(self, game):
         self.game = game
+
         self.alien_fleet = game.alien_fleet
         self.lasers = Group()
-
+        self.alien_lasers = Group()
     def add(self, laser): self.lasers.add(laser)
     def empty(self): self.lasers.empty()
     def fire(self): 
       new_laser = Laser(self.game)
       self.lasers.add(new_laser)
 
+    def alien_shoot(self):
+        if self.alien_fleet.fleet.sprites():
+            random_alien = choice(self.alien_fleet.fleet.sprites())
+            alien_laser = Laser(self.game)
+            alien_laser.center = copy(random_alien.ul)
+            alien_laser.v = Vector(0, 1) * self.game.settings.laser_speed_factor
+            self.alien_lasers.add(alien_laser)
+            
     def update(self):
         for laser in self.lasers.copy():
             if laser.rect.bottom <= 0: self.lasers.remove(laser)
+        for alien_laser in self.alien_lasers.copy():
+            if alien_laser.rect.top >= self.game.settings.screen_height: alien_laser.remove(alien_laser)
 
         collisions = pg.sprite.groupcollide(self.alien_fleet.fleet, self.lasers, False, True)
+        BunkerCollide = pg.sprite.groupcollide(self.game.blocks, self.lasers, True, True)
+        ALcollision = pg.sprite.groupcollide(self.game.blocks, self.alien_lasers, True, True)
         for alien in collisions: 
           if not alien.dying: alien.hit()
+          
 
+        # if AScollision:
+        #     if not self.game.ship.dying: self.game.ship.hit()
+        
         if self.alien_fleet.length() == 0:  
             self.game.restart()
+        elif self.alien_fleet.length() == 1:
+            self.game.settings.alien_speed_factor = 3
             
         for laser in self.lasers:
             laser.update()
-
+        for alien_laser in self.alien_lasers:
+            alien_laser.update()
+            
     def draw(self):
         for laser in self.lasers:
             laser.draw()
+        for alien_laser in self.alien_lasers:
+            alien_laser.draw()
 
 
 class Laser(Sprite):
@@ -59,3 +83,4 @@ class Laser(Sprite):
         self.rect.x, self.rect.y = self.center.x, self.center.y
 
     def draw(self): pg.draw.rect(self.screen, color=self.color, rect=self.rect)
+    
