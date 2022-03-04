@@ -11,6 +11,7 @@ from alien import AlienFleet, UFOSpawner
 from settings import Settings
 from random import randint, choice
 import Bunker
+from scoreboard import Scoreboard
 import threading
 
 
@@ -40,6 +41,7 @@ class Game:
         self.bunker_amount = 4
         self.bunker_positions = [num * (self.settings.screen_width / self.bunker_amount) for num in range(self.bunker_amount)]
         self.create_bunker_set(self.settings.screen_width / 15 , 620, *self.bunker_positions)
+     #   self.sb = Scoreboard(game=self)
 
     
     def create_bunker(self, x_start, y_start, offset_x):
@@ -74,6 +76,8 @@ class Game:
         self.alien_fleet.update()
         self.lasers.update()
         self.ufo.update()
+       # self.sb.update()
+        
     def draw(self):
         self.ship.draw()
         self.alien_fleet.draw()
@@ -81,6 +85,7 @@ class Game:
         self.blocks.draw(self.screen)
         pg.display.flip()
         self.ufo.draw()
+     #   self.sb.draw()
         self.screen.blit(self.bg,(0,0))
 
     def play(self):

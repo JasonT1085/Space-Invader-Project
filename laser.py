@@ -32,7 +32,7 @@ class Lasers:
         for laser in self.lasers.copy():
             if laser.rect.bottom <= 0: self.lasers.remove(laser)
         for alien_laser in self.alien_lasers.copy():
-            if alien_laser.rect.top >= self.game.settings.screen_height: alien_laser.remove(alien_laser)
+            if alien_laser.rect.top >= self.game.settings.screen_height: self.alien_lasers.remove(alien_laser)
 
         collisions = pg.sprite.groupcollide(self.alien_fleet.fleet, self.lasers, False, True)
         BunkerCollide = pg.sprite.groupcollide(self.game.blocks, self.lasers, True, True)
