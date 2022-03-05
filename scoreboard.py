@@ -1,3 +1,4 @@
+from landing_page import WHITE
 import pygame as pg
 from pygame.sprite import Group
 from ship import Ship
@@ -6,20 +7,21 @@ from ship import Ship
 DARK_GREY = (30, 30, 30)
 
 class SbElement:
-    def __init__(self, screen, bg_color, ul, font, get_score, round=True):
+    def __init__(self, game, screen, bg_color, ul, font, get_score, round=True):
         self.screen = screen
+        self.stats = game.stats
         self.screen_rect = screen.get_rect()
         self.bg_color = bg_color
         self.ul = ul
         self.font = font
         self.round = round
-        self.text_color = DARK_GREY
+        self.text_color = WHITE
         self.image, self.rect = None, None
         self.get_score = get_score
         self.last_score = self.get_score()
         self.update() 
 
-    def update(self): 
+    def update(self):
         score = self.get_score()
         if score != 0 and self.last_score == score: return
 
@@ -47,16 +49,16 @@ class Scoreboard():
         screen = game.screen
         sr = screen.get_rect()
         self.bg_color = game.bg_color
-        font = pg.font.SysFont(None, 48)
+        font = pg.font.Font("font.ttf", 48)
 
-        self.score = SbElement(screen=screen, bg_color=game.bg_color,
+        self.score = SbElement(screen=screen, game=self.game, bg_color=game.bg_color,
                                ul=(sr.right - 40, 20), font=font, 
                                get_score=self.stats.get_score)
-        self.highscore = SbElement(screen=screen, bg_color=game.bg_color,
+        self.highscore = SbElement(screen=screen, game=self.game, bg_color=game.bg_color,
                                    ul=(sr.centerx, 20), font=font, 
                                    get_score=self.stats.get_highscore)
-        self.level = SbElement(screen=screen, bg_color=game.bg_color,
-                                   ul=(sr.right - 40, 50), font=font, 
+        self.level = SbElement(screen=screen, game=self.game, bg_color=game.bg_color,
+                                   ul=(sr.right - 40, 70), font=font, 
                                    get_score=self.stats.get_level, round=False)
 
         self.ships = Group()

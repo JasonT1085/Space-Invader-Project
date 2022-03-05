@@ -40,8 +40,8 @@ class Game:
         self.blocks = pg.sprite.Group()
         self.bunker_amount = 4
         self.bunker_positions = [num * (self.settings.screen_width / self.bunker_amount) for num in range(self.bunker_amount)]
-        self.create_bunker_set(self.settings.screen_width / 15 , 620, *self.bunker_positions)
-     #   self.sb = Scoreboard(game=self)
+        self.create_bunker_set(self.settings.screen_width / 10 , 620, *self.bunker_positions)
+        self.sb = Scoreboard(game=self)
 
     
     def create_bunker(self, x_start, y_start, offset_x):
@@ -61,11 +61,12 @@ class Game:
         if self.stats.ships_left == 0: 
           self.game_over()
         print("restarting game")
-        self.lasers.empty()
+        self.lasers.empty() 
         self.alien_fleet.empty()
         self.alien_fleet.create_fleet()
         self.ship.center_bottom()
         self.ship.reset_timer()
+        self.stats.reset_score()
         self.update()
         self.draw()
         self.settings.alien_speed_factor = 1
@@ -76,17 +77,18 @@ class Game:
         self.alien_fleet.update()
         self.lasers.update()
         self.ufo.update()
-       # self.sb.update()
+        self.sb.update()
+        self.stats.update()
         
     def draw(self):
+        self.screen.blit(self.bg,(0,0))
+        self.sb.draw()
         self.ship.draw()
         self.alien_fleet.draw()
         self.lasers.draw()
         self.blocks.draw(self.screen)
-        pg.display.flip()
         self.ufo.draw()
-     #   self.sb.draw()
-        self.screen.blit(self.bg,(0,0))
+        pg.display.flip()
 
     def play(self):
         self.finished = False
@@ -102,7 +104,7 @@ class Game:
 
 def main():
     g = Game()
-    lp = LandingPage(screen=g.screen)
+    lp = LandingPage(screen=g.screen, game=g)
     lp.show()
     g.play()
 

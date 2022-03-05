@@ -10,12 +10,16 @@ import Bunker
 class Lasers:
     def __init__(self, game):
         self.game = game
-
+        self.ship = game.ship
+        self.stats = game.stats
         self.alien_fleet = game.alien_fleet
         self.lasers = Group()
         self.alien_lasers = Group()
+        self.ufo = game.ufo
     def add(self, laser): self.lasers.add(laser)
-    def empty(self): self.lasers.empty()
+    def empty(self): 
+        self.lasers.empty()
+        self.alien_lasers.empty()
     def fire(self): 
       new_laser = Laser(self.game)
       self.lasers.add(new_laser)
@@ -27,6 +31,14 @@ class Lasers:
             alien_laser.center = copy(random_alien.ul)
             alien_laser.v = Vector(0, 1) * self.game.settings.laser_speed_factor
             self.alien_lasers.add(alien_laser)
+    
+    def ufo_shoot(self):
+        if self.ufo.ufo.sprites():
+            ufo = self.ufo.ufo.sprites()[0]
+            ufo_laser = Laser(self.game)
+            ufo_laser.center = copy(ufo.ul)
+            ufo_laser.v = Vector(0, 1) * self.game.settings.laser_speed_factor
+            self.alien_lasers.add(ufo_laser)
             
     def update(self):
         for laser in self.lasers.copy():
@@ -35,11 +47,24 @@ class Lasers:
             if alien_laser.rect.top >= self.game.settings.screen_height: self.alien_lasers.remove(alien_laser)
 
         collisions = pg.sprite.groupcollide(self.alien_fleet.fleet, self.lasers, False, True)
+        
+        ufoCollision = pg.sprite.groupcollide(self.ufo.ufo, self.lasers, False, True)
+        for ufo in ufoCollision:
+            self.stats.add_score(randint(500,1000))
+            if not ufo.dying:
+                ufo.hit()
+        
+        ASCollision = pg.sprite.spritecollide(self.ship, self.alien_lasers, True)
+        if ASCollision:
+            if not self.ship.dying:
+                self.ship.hit()
+                
         BunkerCollide = pg.sprite.groupcollide(self.game.blocks, self.lasers, True, True)
         ALcollision = pg.sprite.groupcollide(self.game.blocks, self.alien_lasers, True, True)
-        for alien in collisions: 
-          if not alien.dying: alien.hit()
-          
+        for alien in collisions:
+            self.stats.add_score(alien.value)
+            if not alien.dying: 
+                alien.hit()
 
         # if AScollision:
         #     if not self.game.ship.dying: self.game.ship.hit()

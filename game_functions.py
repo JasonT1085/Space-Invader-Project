@@ -2,6 +2,7 @@ import sys
 import pygame as pg
 from vector import Vector
 from laser import Laser
+from random import randint
 
 
 LEFT, RIGHT, UP, DOWN, STOP = 'left', 'right', 'up', 'down', 'stop'
@@ -21,14 +22,19 @@ def check_events(game):
     ship = game.ship
     pg.mixer.init()
     ALIENLASER = pg.USEREVENT + 1
-    pg.time.set_timer(ALIENLASER, 5000)
+    pg.time.set_timer(ALIENLASER, 10000)
+    UFOLASER = pg.USEREVENT + 1
+    pg.time.set_timer(UFOLASER, 2500)
     
     laserEffect = pg.mixer.Sound("shoot.mp3")
     laserEffect.set_volume(0.2)
     for e in pg.event.get():
         if e.type == pg.QUIT:
             sys.exit()
-        if e.type == ALIENLASER:
+        if e.type == UFOLASER:
+            game.lasers.ufo_shoot()
+            laserEffect.play()
+        if e.type == ALIENLASER and randint(1,2) == 1:
             game.lasers.alien_shoot()
             laserEffect.play()
         elif e.type == pg.KEYDOWN:
@@ -36,12 +42,9 @@ def check_events(game):
                 v = dirs[dir_keys[e.key]]
                 ship.inc_add(v)
             elif e.key == pg.K_SPACE:
-              game.ship.toggle_firing()
+              game.lasers.fire()
               laserEffect.play()
         elif e.type == pg.KEYUP:
             if e.key in dir_keys:
                 v = dirs[dir_keys[e.key]]
                 ship.inc_add(-v)
-            elif e.key == pg.K_SPACE:
-              game.ship.toggle_firing()
-

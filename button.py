@@ -1,7 +1,7 @@
 import pygame as pg
 
 class Button():
-    def __init__(self, screen, msg):
+    def __init__(self, screen, msg, centery = 0):
         
         self.screen = screen
         self.screen_rect = screen.get_rect()
@@ -11,7 +11,7 @@ class Button():
         self.text_color = (255,255,255)
         self.font = pg.font.Font("font.ttf", 48)
         
-        self.rect = pg.Rect(0, 650, self.width, self.height)
+        self.rect = pg.Rect(0, centery, self.width, self.height)
         self.rect.centerx = self.screen_rect.centerx
         self.msg = msg
         self.prep_msg(self.msg)

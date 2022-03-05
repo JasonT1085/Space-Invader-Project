@@ -18,9 +18,9 @@ class AlienFleet:
         self.screen = self.game.screen
         self.screen_rect = self.screen.get_rect()
         self.v = v
-        alien1 = Alien(self.game, image_list=AlienFleet.alien1_images)
-        alien2 = Alien(self.game, image_list=AlienFleet.alien2_images)
-        alien3 = Alien(self.game, image_list=AlienFleet.alien3_images)
+        alien1 = Alien( '3', self.game, image_list=AlienFleet.alien1_images)
+        alien2 = Alien( '2', self.game, image_list=AlienFleet.alien2_images)
+        alien3 = Alien( '1', self.game, image_list=AlienFleet.alien3_images)
         self.alien_h1, self.alien_w1 = alien1.rect.height, alien1.rect.width
         self.alien_h2, self.alien_w2 = alien2.rect.height, alien2.rect.width
         self.alien_h3, self.alien_w3 = alien3.rect.height, alien3.rect.width
@@ -50,9 +50,9 @@ class AlienFleet:
         alien3_images = AlienFleet.alien3_images        
         # alien = Alien(game=self.game, ul=(x, y), v=self.v, image_list=images, 
         #               start_index=randint(0, len(images) - 1))
-        alien = Alien(game=self.game, ul=(x, y), v=self.v, image_list=alien1_images)
-        alien2 = Alien(game=self.game, ul=(x2, y2), v=self.v, image_list=alien2_images)
-        alien3 = Alien(game=self.game, ul=(x3, y3), v=self.v, image_list=alien3_images)
+        alien = Alien( '3', game=self.game, ul=(x, y), v=self.v, image_list=alien1_images)
+        alien2 = Alien( '2', game=self.game, ul=(x2, y2), v=self.v, image_list=alien2_images)
+        alien3 = Alien( '1', game=self.game, ul=(x3, y3), v=self.v, image_list=alien3_images)
         if(count < 1):
             self.fleet.add(alien)
         elif(count<=2):
@@ -103,7 +103,7 @@ class AlienFleet:
 
 
 class Alien(Sprite):
-    def __init__(self, game, image_list, start_index=0, ul=(0, 100), v=Vector(1, 0)):
+    def __init__(self, tier, game, image_list, start_index=0, ul=(0, 100), v=Vector(1, 0)):
         super().__init__()
         self.game = game
         self.screen = game.screen
@@ -120,6 +120,10 @@ class Alien(Sprite):
         self.normal_timer = Timer(image_list=image_list, delay=1000, is_loop=True)
         self.timer = self.normal_timer
         self.dying = False
+        self.value = 0
+        if tier == '1': self.value = 10
+        elif tier == '2': self.value = 20
+        elif tier == '3': self.value = 40
 
     def change_v(self, v): self.v = v
     def check_bottom(self): return self.rect.bottom >= self.screen_rect.bottom
@@ -159,7 +163,8 @@ class UFOSpawner():
         self.UFO_timer()
         
     def UFO_timer(self):   
-        self.ufo.add(ufo(game=self, side=choice(['right', 'left'])))
+        if pg.time.get_ticks() % 500 == 0 and randint(1,2) == 1:
+            self.ufo.add(ufo(game=self, side=choice(['right', 'left'])))
             
     def update(self):
         delta_s = Vector(0, 0)
@@ -171,7 +176,7 @@ class UFOSpawner():
             ufo.draw()
         
 class ufo(Sprite):
-    def __init__(self, game, side, start_index=0, ul=(100, 100), v=Vector(1, 0)):
+    def __init__(self, game, side, start_index=0, ul=(0, 50), v=Vector(1, 0)):
         super().__init__()
         images = [pg.image.load(f'images/alien3.png') for n in range(1)]
         self.image = pg.image.load('images/alien3.png')
@@ -190,15 +195,19 @@ class ufo(Sprite):
         self.normal_timer = Timer(image_list=self.image_list, delay=1000, is_loop=True)
         self.timer = self.normal_timer
         self.dying = False
-        # if side == 'right':
-        #     self.ul.x = self.settings.screen_width
-        #     self.speed = -1
-        # elif side == 'left':
-        self.speed = 1
+        if side == 'right':
+            self.ul.x = self.settings.screen_width
+            self.speed = -1
+        elif side == 'left':
+            self.ul.x = 0
+            self.speed = 1
 
     def hit(self): 
       self.timer = self.exploding_timer
       self.dying = True
+    
+    def get_ul(self):
+        return self.ul
             
     
     def update(self, delta_s=Vector(0, 0)):
