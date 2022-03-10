@@ -19,6 +19,9 @@ dir_keys = {pg.K_LEFT: LEFT, pg.K_a: LEFT,
             pg.K_DOWN: DOWN, pg.K_s: DOWN}
 
 def check_events(game):
+    UFO_SPAWNTIME = pg.USEREVENT + 1
+    dontSpawn = False
+    pg.time.set_timer(UFO_SPAWNTIME, 10000)
     ship = game.ship
     pg.mixer.init()
     ALIENLASER = pg.USEREVENT + 1
@@ -34,6 +37,8 @@ def check_events(game):
         if e.type == UFOLASER:
             game.lasers.ufo_shoot()
             laserEffect.play()
+        if e.type == UFO_SPAWNTIME and randint(1,2) == 1 and len(game.ufo.ufo) == 0:
+            game.ufo.UFO_timer()
         if e.type == ALIENLASER and randint(1,2) == 1:
             game.lasers.alien_shoot()
             laserEffect.play()

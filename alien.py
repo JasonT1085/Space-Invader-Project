@@ -5,7 +5,7 @@ from timer import Timer
 from random import randint, choice
 
 class AlienFleet:
-    alien_exploding_images = [pg.image.load(f'images/alien_explode{n}.png') for n in range(2)]
+    alien_exploding_images = [pg.image.load(f'images/alien_explode{n}.png') for n in range(5)]
     alien1_images = [pg.image.load(f'images/alien0_{n}.png') for n in range(2)]
     alien2_images = [pg.image.load(f'images/alien1_{n}.png') for n in range(2)]
     alien3_images = [pg.image.load(f'images/alien2_{n}.png') for n in range(2)]
@@ -105,6 +105,8 @@ class AlienFleet:
 class Alien(Sprite):
     def __init__(self, tier, game, image_list, start_index=0, ul=(0, 100), v=Vector(1, 0)):
         super().__init__()
+        self.alienDeath = pg.mixer.Sound("Alien_death.mp3")
+        self.alienDeath.set_volume(0.2)
         self.game = game
         self.screen = game.screen
         self.settings = game.settings
@@ -134,6 +136,7 @@ class Alien(Sprite):
     def hit(self): 
       self.timer = self.exploding_timer
       self.dying = True
+      self.alienDeath.play()
             
     def update(self, delta_s=Vector(0, 0)):
         if self.dying and self.timer.is_expired():
@@ -152,25 +155,33 @@ class Alien(Sprite):
       self.screen.blit(image, rect)
       # self.screen.blit(self.image, self.rect)
 
+pg.mixer.init()
+ufoSound = pg.mixer.Sound('ufo_lowpitch.wav')
+ufoSound.set_volume(0.01)
+
 class UFOSpawner():
     def __init__(self, game, v = Vector(1,0)):
         self.game = game
         self.screen = game.screen
         self.v = v
         self.settings = game.settings
-        self.UFO_spawn_time = randint(40, 80)
         self.ufo = GroupSingle()
-        self.UFO_timer()
         
     def UFO_timer(self):   
-        if pg.time.get_ticks() % 500 == 0 and randint(1,2) == 1:
-            self.ufo.add(ufo(game=self, side=choice(['right', 'left'])))
-            
+        self.ufo.add(ufo(game=self, side=choice(['right', 'left'])))
+    def check_edges(self):
+        for ufo in self.ufo.sprites():
+            return True if ufo.check_sides() else False
+        
     def update(self):
         delta_s = Vector(0, 0)
         for ufo in self.ufo.sprites():
             ufo.update(delta_s=delta_s)
-        
+            # ufo.play_sound()
+            if self.check_edges():
+                ufo.dying = True
+                ufoSound.stop()
+            
     def draw(self):
         for ufo in self.ufo.sprites():
             ufo.draw()
@@ -180,8 +191,12 @@ class ufo(Sprite):
         super().__init__()
         images = [pg.image.load(f'images/alien3.png') for n in range(1)]
         self.image = pg.image.load('images/alien3.png')
+        self.alienDeath = pg.mixer.Sound("Alien_death.mp3")
+        self.alienDeath.set_volume(0.2)
         
+        self.value = randint(500,1000)
         self.v = v
+        self.side = side
         self.game = game
         self.screen = game.screen
         self.settings = game.settings
@@ -201,10 +216,29 @@ class ufo(Sprite):
         elif side == 'left':
             self.ul.x = 0
             self.speed = 1
+            
+    def play_sound(self):
+        r = self.rect
+        
+        if self.side == 'right' and r.right >= 0 and not self.dying:
+            ufoSound.play(-1)
+        elif self.side == 'left' and r.left <= self.screen_rect.right and not self.dying:
+            ufoSound.play(-1)
+            
+    def check_sides(self):
+        r = self.rect
+        if self.side == 'right' and r.right <= 0:
+            ufoSound.stop()
+            return r.right <= 0
+        elif self.side == 'left' and r.left >= self.screen_rect.right:
+            ufoSound.stop()
+            return r.left >= self.screen_rect.right 
 
     def hit(self): 
       self.timer = self.exploding_timer
       self.dying = True
+      self.alienDeath.play()
+      ufoSound.stop()
     
     def get_ul(self):
         return self.ul

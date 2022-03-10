@@ -16,6 +16,8 @@ class Ship(Sprite):
     self.lasers = None
     self.stats = game.stats
     self.image = pg.image.load('images/ship.bmp')
+    self.shipDeath = pg.mixer.Sound("Ship_death.mp3")
+    self.shipDeath.set_volume(0.2)
 
     self.rect = self.image.get_rect()
     self.screen_rect = self.screen.get_rect()
@@ -42,6 +44,7 @@ class Ship(Sprite):
   def hit(self):  
     self.timer = self.exploding_timer
     self.dying = True
+    self.shipDeath.play()
   def is_dying(self): return self.dying  
   def die(self):
     self.stats.ship_hit()

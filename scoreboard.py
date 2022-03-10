@@ -18,7 +18,7 @@ class SbElement:
         self.text_color = WHITE
         self.image, self.rect = None, None
         self.get_score = get_score
-        self.last_score = self.get_score()
+        self.last_score = self.stats.get_score()
         self.update() 
 
     def update(self):

@@ -5,6 +5,7 @@ from alien import AlienFleet
 from settings import Settings
 from button import Button
 from timer import Timer
+import wave
 GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -33,6 +34,7 @@ class LandingPage:
         subheadingFont = pg.font.Font("font.ttf", 100)
         font = pg.font.Font("font.ttf", 48)
         bgm = "music.mp3"
+        self.file_wav = wave.open('invadermusic.wav')
         pg.mixer.init()
         pg.mixer.music.load(bgm)
         pg.mixer.music.set_volume(0.2)
@@ -96,6 +98,8 @@ class LandingPage:
             if e.type == pg.MOUSEBUTTONDOWN: 
                 if self.play_button.rect.collidepoint(mouseX,mouseY):
                     self.landing_page_finished = True
+                    pg.mixer.music.stop()
+                    pg.mixer.init()
                 elif self.hs_button.rect.collidepoint(mouseX,mouseY):
                     if not self.score_toggle: self.score_toggle = True
                     else: self.score_toggle = False

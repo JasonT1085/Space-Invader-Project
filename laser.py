@@ -50,7 +50,7 @@ class Lasers:
         
         ufoCollision = pg.sprite.groupcollide(self.ufo.ufo, self.lasers, False, True)
         for ufo in ufoCollision:
-            self.stats.add_score(randint(500,1000))
+            self.stats.add_score(ufo.value)
             if not ufo.dying:
                 ufo.hit()
         
