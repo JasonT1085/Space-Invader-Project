@@ -34,7 +34,6 @@ class LandingPage:
         subheadingFont = pg.font.Font("font.ttf", 100)
         font = pg.font.Font("font.ttf", 48)
         bgm = "music.mp3"
-        self.file_wav = wave.open('invadermusic.wav')
         pg.mixer.init()
         pg.mixer.music.load(bgm)
         pg.mixer.music.set_volume(0.2)

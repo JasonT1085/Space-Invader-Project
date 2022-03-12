@@ -9,7 +9,7 @@ class Settings:
         self.ship_speed_factor = 3
         self.ship_limit = 3
 
-        self.alien_speed_factor = 1
+        self.alien_speed_factor = 30
         self.fleet_drop_speed = 10
         self.fleet_direction = Vector(1, 0)
 

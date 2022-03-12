@@ -5,6 +5,7 @@ from copy import copy
 from random import randint, choice
 from alien import Alien
 import Bunker
+import barrier
 
 
 class Lasers:
@@ -50,7 +51,6 @@ class Lasers:
         
         ufoCollision = pg.sprite.groupcollide(self.ufo.ufo, self.lasers, False, True)
         for ufo in ufoCollision:
-            self.stats.add_score(ufo.value)
             if not ufo.dying:
                 ufo.hit()
         
@@ -61,8 +61,9 @@ class Lasers:
                 
         BunkerCollide = pg.sprite.groupcollide(self.game.blocks, self.lasers, True, True)
         ALcollision = pg.sprite.groupcollide(self.game.blocks, self.alien_lasers, True, True)
+        
+        
         for alien in collisions:
-            self.stats.add_score(alien.value)
             if not alien.dying: 
                 alien.hit()
 
@@ -71,8 +72,13 @@ class Lasers:
         
         if self.alien_fleet.length() == 0:  
             self.game.restart()
+            self.game.stats.level+=1
         elif self.alien_fleet.length() == 1:
-            self.game.settings.alien_speed_factor = 3
+            self.alien_fleet.moveTime = 50
+        elif self.alien_fleet.length() == 15:
+            self.alien_fleet.moveTime = 250
+        elif self.alien_fleet.length() == 10:
+            self.alien_fleet.moveTime = 150
             
         for laser in self.lasers:
             laser.update()

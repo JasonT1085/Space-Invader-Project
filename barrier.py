@@ -13,40 +13,44 @@ class Barriers:
         self.game = game
         self.screen = game.screen
         self.settings = game.settings
-        self.barriers = Group()
-        self.barrier_amount = 4
-        self.barrier_positions = [num * (self.settings.screen_width / self.barrier_amount) for num in range(self.barrier_amount)]
+        self.lasers = game.lasers
+        self.barriers = Barrier(game=self.game, ul = (0,0))
+        self.barrier_amount = 5
+        self.barrier_positions = [num * (self.settings.screen_width / self.barrier_amount) for num in range(self.barrier_amount)] 
         self.create_barrier_set(self.settings.screen_width / 10 , 620, *self.barrier_positions)
         
         # self.alien_fleet = game.alien_fleet
     def create_barrier_set(self,x_start, y_start, *offset):
         for offset_x in offset:
-            self.create_barrier(x_start, y_start, offset_x)
-    
-    def create_barrier(self, x_start, y_start, offset_x):
-        self.barriers.add(Barrier(game=self.game,ul = (x_start + offset_x, y_start)))
+            self.barriers.ul = (x_start + offset_x, y_start)
+            self.barriers.create_barrier()
     
     def update(self): 
-        for barrier in self.barriers:
+        for barrier in self.barriers.barrier_elements.sprites():
             barrier.update()
 
     def draw(self): 
-        for barrier in self.barriers:
+        for barrier in self.barriers.barrier_elements.sprites():
             barrier.draw()
 
 
 class Barrier(Sprite):
     def __init__(self, game, ul, wh = (4, 4)): 
-        img_list = [pg.image.load(f'images/block{n}.png') for n in range(5)]
+        self.img_list = [pg.image.load(f'images/block{n}.png') for n in range(5)]
+        for image in self.img_list:
+            pg.transform.scale(image, (6,6))
         self.game = game
         self.barrier_elements = Group()
         self.ul = ul
         self.wh = wh
-        for row in range(wh[0]):
-            for col in range(wh[1]):
-                be = BarrierElement(game=game, img_list=img_list,
-                    ul=(ul[0] + col, ul[1] + row), wh=self.wh)
-                self.barrier_elements.add(be)
+        self.lasers = game.lasers
+
+    def create_barrier(self):
+        for row in range(self.wh[0]):
+            for col in range(self.wh[1]):
+                be = BarrierElement(game=self.game, img_list=self.img_list,
+                    ul=(self.ul[0] + col, self.ul[1] + row), wh=self.wh)
+                self.barrier_elements.add(be)        
         
     def update(self): 
         collisions = pg.sprite.groupcollide(self.barrier_elements, 
@@ -60,7 +64,9 @@ class Barrier(Sprite):
 
 
 class BarrierElement(Sprite):
-    def __init__(self, game, img_list, ul, wh): 
+    def __init__(self, game, img_list, ul, wh):
+        super().__init__()
+        self.screen = game.screen 
         self.ul = ul
         self.wh = wh
         self.rect = pg.Rect(ul[0], ul[1], wh[0], wh[1])

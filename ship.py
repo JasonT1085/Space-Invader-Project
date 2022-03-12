@@ -44,7 +44,7 @@ class Ship(Sprite):
   def hit(self):  
     self.timer = self.exploding_timer
     self.dying = True
-    self.shipDeath.play()
+    pg.mixer.Channel(5).play(self.shipDeath)
   def is_dying(self): return self.dying  
   def die(self):
     self.stats.ship_hit()

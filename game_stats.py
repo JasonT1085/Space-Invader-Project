@@ -1,7 +1,9 @@
 HS_FILE = 'highscore.txt'
-
 import os
-
+import time
+prev_time = time.time()
+FPS = 4
+dt = (time.time() - prev_time) * FPS
 class GameStats:
     def __init__(self, game):
         self.game = game
@@ -9,7 +11,7 @@ class GameStats:
         self.reset_stats()
         self.last_ships_left = self.ships_left
         self.score = 0
-        self.level = 0
+        self.level = 1
         self.hscore = 0
         self.load_highscore()
         

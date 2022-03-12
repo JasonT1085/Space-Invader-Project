@@ -3,7 +3,7 @@ import pygame as pg
 from vector import Vector
 from laser import Laser
 from random import randint
-
+from time import sleep
 
 LEFT, RIGHT, UP, DOWN, STOP = 'left', 'right', 'up', 'down', 'stop'
 
@@ -18,12 +18,13 @@ dir_keys = {pg.K_LEFT: LEFT, pg.K_a: LEFT,
             pg.K_UP: UP, pg.K_w: UP,
             pg.K_DOWN: DOWN, pg.K_s: DOWN}
 
+def reset():
+    pg.event.clear()
+
 def check_events(game):
     UFO_SPAWNTIME = pg.USEREVENT + 1
-    dontSpawn = False
-    pg.time.set_timer(UFO_SPAWNTIME, 10000)
+    pg.time.set_timer(UFO_SPAWNTIME, 5000)
     ship = game.ship
-    pg.mixer.init()
     ALIENLASER = pg.USEREVENT + 1
     pg.time.set_timer(ALIENLASER, 10000)
     UFOLASER = pg.USEREVENT + 1
@@ -36,9 +37,9 @@ def check_events(game):
             sys.exit()
         if e.type == UFOLASER:
             game.lasers.ufo_shoot()
-            laserEffect.play()
-        if e.type == UFO_SPAWNTIME and randint(1,2) == 1 and len(game.ufo.ufo) == 0:
-            game.ufo.UFO_timer()
+            pg.mixer.Channel(6).play(laserEffect)
+        if e.type == UFO_SPAWNTIME and randint(1,10) == 1 and len(game.ufo.ufo) == 0:
+            game.ufo.resetTimer = True
         if e.type == ALIENLASER and randint(1,2) == 1:
             game.lasers.alien_shoot()
             laserEffect.play()
