@@ -15,7 +15,7 @@ class AlienFleet:
 
     def __init__(self, game, v=Vector(1, 0)):
         
-        self.invaderSound4 = pg.mixer.Sound('invadermusic4.wav')
+        self.invaderSound4 = pg.mixer.Sound('sounds/invadermusic4.wav')
         self.invaderSound4.set_volume(0.05)
         self.game = game
         self.ship = self.game.ship
@@ -50,14 +50,14 @@ class AlienFleet:
 
     def set_ship(self, ship): self.ship = ship
     def create_alien(self, row, col, count):
-        x = self.alien_w1 * (2 * col + 1)
-        y = self.alien_h1 * (2 *row + 1)
+        x = self.alien_w1 * (1.8 * col + 1)
+        y = self.alien_h1 * (1.8 *row + 1)
         alien1_images = AlienFleet.alien1_images
-        x2 = self.alien_w2 * (2 *col + 1)
-        y2 = self.alien_h2 * (2 *row + 1)
+        x2 = self.alien_w2 * (1.8 *col + 1)
+        y2 = self.alien_h2 * (1.8 *row + 1)
         alien2_images = AlienFleet.alien2_images
-        x3 = self.alien_w3 * (2 *col + 1)
-        y3 = self.alien_h3 * (2 *row + 1)
+        x3 = self.alien_w3 * (1.8 *col + 1)
+        y3 = self.alien_h3 * (1.8 *row + 1)
         alien3_images = AlienFleet.alien3_images        
         # alien = Alien(game=self.game, ul=(x, y), v=self.v, image_list=images, 
         #               start_index=randint(0, len(images) - 1))
@@ -104,6 +104,8 @@ class AlienFleet:
                 self.v.x *= -1
                 self.change_v(self.v)
                 delta_s = Vector(0, self.settings.fleet_drop_speed)
+                self.moveTime-=50
+                self.moveTime= 150 if self.moveTime < 150 else self.moveTime
             if pg.sprite.spritecollideany(self.ship, self.fleet) or self.check_bottom():
                 if not self.ship.is_dying(): self.ship.hit() 
             for alien in self.fleet.sprites():
@@ -120,7 +122,7 @@ class AlienFleet:
 class Alien(Sprite):
     def __init__(self, tier, game, image_list, start_index=0, ul=(0, 100), v=Vector(1, 0)):
         super().__init__()
-        self.alienDeath = pg.mixer.Sound("Alien_death.mp3")
+        self.alienDeath = pg.mixer.Sound("sounds/Alien_death.mp3")
         self.alienDeath.set_volume(0.5)
         self.game = game
         self.screen = game.screen
@@ -147,7 +149,7 @@ class Alien(Sprite):
     def check_bottom(self): return self.rect.bottom >= self.screen_rect.bottom
     def check_edges(self):
         r = self.rect
-        return r.right >= self.screen_rect.right or r.left <= 0
+        return r.right >= self.screen_rect.right - 40 or r.left <= 30
 
     def hit(self): 
       self.timer = self.exploding_timer
@@ -178,10 +180,13 @@ class Alien(Sprite):
         rect.x, rect.y = self.rect.x, self.rect.y
         self.screen.blit(image, rect)
       else:
-        self.screen.blit(self.image, self.rect)
+        image = self.timer.image()
+        rect = image.get_rect()
+        rect.x, rect.y = self.rect.x, self.rect.y
+        self.screen.blit(self.image, rect)
 
 pg.mixer.init()
-ufoSound = pg.mixer.Sound('ufo_lowpitch.wav')
+ufoSound = pg.mixer.Sound('sounds/ufo_lowpitch.wav')
 ufoSound.set_volume(0.1)
 
 class UFOSpawner():
@@ -234,11 +239,11 @@ class UFOSpawner():
 class ufo(Sprite):
     def __init__(self, game, side, start_index=0, ul=(0,0), v=Vector(1, 0)):
         super().__init__()
-        images = [pg.image.load(f'images/alien3.png') for n in range(1)]
+        images = [pg.image.load(f'images/alien3_{n}.png') for n in range(2)]
         self.image = pg.image.load('images/alien3.png')
-        self.alienDeath = pg.mixer.Sound("ufoDeath.wav")
+        self.alienDeath = pg.mixer.Sound("sounds/ufoDeath.wav")
         self.alienDeath.set_volume(0.5)
-        self.alienExplosion = pg.mixer.Sound("ufoExplosion.wav")
+        self.alienExplosion = pg.mixer.Sound("sounds/ufoExplosion.wav")
         self.alienExplosion.set_volume(0.5)
         
        # self.prevTimer = pg.time.get_ticks()
@@ -310,7 +315,7 @@ class ufo(Sprite):
       self.screen.blit(image, rect)
       
     def ufoDeath(self, score):
-        self.text = Text(FONT, 20, str(score), (255,255,255),
+        self.text = Text(FONT, 48, str(score), (255,255,255),
                          self.rect.x, self.rect.y + 6)
         now = pg.time.get_ticks()
         passed = now - self.deathTimer

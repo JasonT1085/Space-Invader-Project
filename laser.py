@@ -17,6 +17,10 @@ class Lasers:
         self.lasers = Group()
         self.alien_lasers = Group()
         self.ufo = game.ufo
+        self.timer = pg.time.get_ticks()
+        self.laserEffect = pg.mixer.Sound("sounds/shoot.mp3")
+        self.laserEffect.set_volume(0.2)
+
     def add(self, laser): self.lasers.add(laser)
     def empty(self): 
         self.lasers.empty()
@@ -24,22 +28,27 @@ class Lasers:
     def fire(self): 
       new_laser = Laser(self.game)
       self.lasers.add(new_laser)
+      pg.mixer.Channel(6).play(self.laserEffect)
 
     def alien_shoot(self):
-        if self.alien_fleet.fleet.sprites():
+        if self.alien_fleet.fleet.sprites() and (pg.time.get_ticks() - self.timer) > 600:
             random_alien = choice(self.alien_fleet.fleet.sprites())
             alien_laser = Laser(self.game)
             alien_laser.center = copy(random_alien.ul)
             alien_laser.v = Vector(0, 1) * self.game.settings.laser_speed_factor
             self.alien_lasers.add(alien_laser)
+            pg.mixer.Channel(6).play(self.laserEffect)
+            self.timer = pg.time.get_ticks()
     
     def ufo_shoot(self):
-        if self.ufo.ufo.sprites():
+        if self.ufo.ufo.sprites() and (pg.time.get_ticks() - self.timer) > 500:
             ufo = self.ufo.ufo.sprites()[0]
             ufo_laser = Laser(self.game)
             ufo_laser.center = copy(ufo.ul)
             ufo_laser.v = Vector(0, 1) * self.game.settings.laser_speed_factor
             self.alien_lasers.add(ufo_laser)
+            pg.mixer.Channel(6).play(self.laserEffect)
+            self.timer = pg.time.get_ticks()
             
     def update(self):
         for laser in self.lasers.copy():

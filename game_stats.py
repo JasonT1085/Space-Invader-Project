@@ -1,4 +1,4 @@
-HS_FILE = 'highscore.txt'
+HS_FILE = 'scores/highscore.txt'
 import os
 import time
 prev_time = time.time()

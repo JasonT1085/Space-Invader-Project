@@ -30,26 +30,21 @@ def check_events(game):
     UFOLASER = pg.USEREVENT + 1
     pg.time.set_timer(UFOLASER, 2500)
     
-    laserEffect = pg.mixer.Sound("shoot.mp3")
-    laserEffect.set_volume(0.2)
     for e in pg.event.get():
         if e.type == pg.QUIT:
             sys.exit()
         if e.type == UFOLASER:
             game.lasers.ufo_shoot()
-            pg.mixer.Channel(6).play(laserEffect)
         if e.type == UFO_SPAWNTIME and randint(1,10) == 1 and len(game.ufo.ufo) == 0:
             game.ufo.resetTimer = True
         if e.type == ALIENLASER and randint(1,2) == 1:
             game.lasers.alien_shoot()
-            laserEffect.play()
         elif e.type == pg.KEYDOWN:
             if e.key in dir_keys:
                 v = dirs[dir_keys[e.key]]
                 ship.inc_add(v)
             elif e.key == pg.K_SPACE:
               game.lasers.fire()
-              laserEffect.play()
         elif e.type == pg.KEYUP:
             if e.key in dir_keys:
                 v = dirs[dir_keys[e.key]]

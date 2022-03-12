@@ -46,13 +46,15 @@ class Game:
 
     
     def create_bunker(self, x_start, y_start, offset_x):
+        alternate = True
         for row_index, row in enumerate(self.shape):
             for col_index, col in enumerate(row):
                 if col == 'x':
                     x = x_start + col_index * self.block_size + offset_x
                     y = y_start + row_index * self.block_size
-                    block = Bunker.Block(self.block_size,(0,255,0),x,y)
+                    block = Bunker.Block(self.block_size,(255,223,250),x,y) if alternate else Bunker.Block(self.block_size,(155,243,191),x,y)
                     self.blocks.add(block)
+                alternate = not alternate
     
     def create_bunker_set(self,x_start, y_start, *offset):
         for offset_x in offset:
@@ -75,6 +77,7 @@ class Game:
         self.ship.reset_timer()
         self.stats.reset_score()
         self.stats.level = 1
+        self.currentTime = pg.time.get_ticks()
         sleep(0.5)
 
     def update(self):

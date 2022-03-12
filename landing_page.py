@@ -22,7 +22,7 @@ class LandingPage:
         timer1 = Timer(image_list=alien1_images, delay=1000, is_loop=True)
         timer2 = Timer(image_list=alien2_images, delay=1000, is_loop=True)
         timer3 = Timer(image_list=alien3_images, delay=1000, is_loop=True)
-        
+        self.game = game
         self.screen = screen
         self.settings = game.settings
         self.landing_page_finished = False
@@ -33,7 +33,7 @@ class LandingPage:
         headingFont = pg.font.Font("font.ttf", 192)
         subheadingFont = pg.font.Font("font.ttf", 100)
         font = pg.font.Font("font.ttf", 48)
-        bgm = "music.mp3"
+        bgm = "sounds/music.mp3"
         pg.mixer.init()
         pg.mixer.music.load(bgm)
         pg.mixer.music.set_volume(0.2)
@@ -86,7 +86,7 @@ class LandingPage:
     def toggle_scores(self):
         font = pg.font.Font("font.ttf", 32)
         self.highScorerect = self.get_text_rect(text =self.texts[7], centerx = 30, centery = self.settings.screen_height - 30 )
-        self.highScore = font.render('HIGHSCORE: 1800', True, WHITE)
+        self.highScore = font.render(str(self.game.stats.get_highscore()), True, WHITE)
         self.screen.blit(self.highScore, self.highScorerect)
     
     def check_events(self):
