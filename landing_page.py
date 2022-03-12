@@ -18,10 +18,11 @@ class LandingPage:
         alien1_images = [pg.image.load(f'images/alien0_{n}.png') for n in range(2)]
         alien2_images = [pg.image.load(f'images/alien1_{n}.png') for n in range(2)]
         alien3_images = [pg.image.load(f'images/alien2_{n}.png') for n in range(2)]
-        self.ufo_image = pg.image.load(f'images/alien3.png')
+        ufo_images = [pg.image.load(f'images/alien3_{n}.png') for n in range(2)]
         timer1 = Timer(image_list=alien1_images, delay=1000, is_loop=True)
         timer2 = Timer(image_list=alien2_images, delay=1000, is_loop=True)
         timer3 = Timer(image_list=alien3_images, delay=1000, is_loop=True)
+        timer4 = Timer(image_list=ufo_images, delay=1000, is_loop=True)
         self.game = game
         self.screen = screen
         self.settings = game.settings
@@ -38,8 +39,8 @@ class LandingPage:
         pg.mixer.music.load(bgm)
         pg.mixer.music.set_volume(0.2)
         pg.mixer.music.play(-1)
-        self.alien_images = [alien1_images, alien2_images, alien3_images]
-        self.timer = [timer1, timer2, timer3]
+        self.alien_images = [alien1_images, alien2_images, alien3_images, ufo_images]
+        self.timer = [timer1, timer2, timer3, timer4]
         
         strings = [('SPACE', WHITE, headingFont), ('INVADERS', GREEN, subheadingFont),
                 ('= 40 PTS', GREY, font), ('= 20 PTS', GREY, font),
@@ -59,8 +60,7 @@ class LandingPage:
         n = len(self.texts)
         alienLen = len(self.alien_images)
         self.rects = [self.get_text_rect(text=self.texts[i], centerx=centerx, centery=self.posns[i]) for i in range(n)]
-        self.alienrects = [self.get_alien_rect(timer=self.timer[i], centerx = aliencenterx, centery=self.posns[j]) for i in range(alienLen) for j in range(2,5)]
-        self.uforect = self.get_ufo_rect(alien=self.ufo_image, centerx = aliencenterx, centery = self.posns[5])
+        self.alienrects = [self.get_alien_rect(timer=self.timer[i], centerx = aliencenterx, centery=self.posns[j]) for i in range(alienLen) for j in range(2,6)]
         # self.normal_timer = Timer(image_list=image_list, delay=1000, is_loop=True)
     
     def get_text(self, font, msg, color): return font.render(msg, True, color, BLACK)
@@ -77,12 +77,7 @@ class LandingPage:
         rect.centerx = centerx
         rect.centery = centery
         return rect
-    def get_ufo_rect(self, alien, centerx, centery):
-        rect = alien.get_rect()
-        rect.centerx = centerx
-        rect.centery = centery
-        return rect
-    
+
     def toggle_scores(self):
         font = pg.font.Font("font.ttf", 32)
         self.highScorerect = self.get_text_rect(text =self.texts[7], centerx = 30, centery = self.settings.screen_height - 30 )
@@ -120,18 +115,15 @@ class LandingPage:
             self.screen.blit(self.texts[i], self.rects[i])
     
     def draw_alien(self):
-      for i in range(3):  
+      for i in range(4):  
         image = self.timer[i].image()
         self.screen.blit(image, self.alienrects[i])
 
-    def draw_ufo(self):
-        self.screen.blit(self.ufo_image, self.uforect)
 
     def draw(self):
         self.screen.blit(self.bg,(0,0))
         self.draw_text()
         self.draw_alien()   # TODO draw my aliens
-        self.draw_ufo()
         # self.lasers.draw()        
         self.play_button.draw_button() # TODO draw my button and handle mouse events
         self.hs_button.draw_button()
