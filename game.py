@@ -23,7 +23,7 @@ class Game:
         
         pg.init()
         self.prevTime = pg.time.get_ticks()
-        self.bg = pg.image.load("spaceBG.jpg")
+        self.bg = pg.image.load("images/spaceBG.jpg")
         self.settings = Settings()
         self.stats = GameStats(game=self)
         self.screen = pg.display.set_mode((self.settings.screen_width,

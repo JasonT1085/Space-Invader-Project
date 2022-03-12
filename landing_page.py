@@ -30,7 +30,7 @@ class LandingPage:
         self.score_toggle = False
         self.play_button = Button(screen, "PLAY", centery = 650)
         self.hs_button = Button(screen, "HIGHSCORE", centery = 700)
-        self.bg = pg.image.load("spaceBG.jpg")
+        self.bg = pg.image.load("images/spaceBG.jpg")
         headingFont = pg.font.Font("font.ttf", 192)
         subheadingFont = pg.font.Font("font.ttf", 100)
         font = pg.font.Font("font.ttf", 48)
